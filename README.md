@@ -1,8 +1,8 @@
-# Haita MVP — Hotel TV Guest Experience
+# Haita MVP — Hotel TV and Staff Dashboard
 
 A TV-first web app that turns a boutique hotel's in-room Android smart TVs into a
-personalized guest welcome screen. This is the **Phase 1 prototype**: a single
-room (`/tv/101`) rendering real, personalized content from Supabase.
+personalized guest welcome screen, with a small staff dashboard for managing the
+six rooms and their content.
 
 ## What it shows
 
@@ -21,6 +21,20 @@ states, no hover dependency, one non-scrolling viewport. If the hotel systems
 can't be reached, a calm fallback screen appears (and self-heals) instead of a
 blank crash.
 
+## Staff dashboard
+
+Visit `/admin` and sign in with the shared staff password configured in the
+server environment. Staff can:
+
+- See occupied and vacant rooms at a glance
+- Assign, update, and clear room guests
+- Update Wi-Fi, breakfast, checkout, reception, and Jellyfin details
+- Add, edit, activate, and deactivate local recommendations
+
+The dashboard uses signed, HTTP-only staff sessions. Every data read and Server
+Action verifies that session before using the server-only Supabase service-role
+client.
+
 ## Stack
 
 Next.js (App Router) · TypeScript · Tailwind CSS v4 · Supabase (Postgres).
@@ -35,7 +49,8 @@ Next.js (App Router) · TypeScript · Tailwind CSS v4 · Supabase (Postgres).
 
 2. **Configure environment**
 
-   Copy `.env.example` to `.env.local` and fill in your Supabase values:
+   Copy `.env.example` to `.env.local` and fill in your Supabase and staff login
+   values:
 
    ```bash
    cp .env.example .env.local
@@ -59,27 +74,32 @@ Next.js (App Router) · TypeScript · Tailwind CSS v4 · Supabase (Postgres).
    npm run dev
    ```
 
-   Open <http://localhost:3000/tv/101>.
+   Open <http://localhost:3000/tv/101> for the seeded guest screen, or
+   <http://localhost:3000/admin> for the staff dashboard.
 
 ## How data works
 
-All reads are server-side using the Supabase **service role** key. Every table
+All Supabase access is server-side using the **service role** key. Every table
 has Row Level Security enabled with **no policies**, so the anon/public key can
-read nothing — a leaked anon key exposes no guest data. Edit room/guest content
-directly in Supabase Studio; the screen auto-refreshes every 5 minutes.
+read or write nothing — a leaked anon key exposes no guest data. Staff writes
+are accepted only from authenticated Server Actions. The guest screen
+auto-refreshes every 5 minutes.
 
 ## Project layout
 
 ```
 src/app/tv/[room]/     Guest screen route + loading/error/not-found states
+src/app/admin/          Staff login, rooms, settings, and recommendations
+src/components/admin/  Shared staff dashboard form components
 src/components/tv/      TV UI components (FocusableCard, WeatherWidget, …)
+src/lib/admin/          Staff session and protected data-access helpers
 src/lib/                Supabase client, Open-Meteo weather, QR, data loader
 supabase/               SQL migration + seed
 ```
 
-## Not in this phase
+## Not yet included
 
-Staff dashboard, the Android TV kiosk shell (FreeKiosk / Webview Kiosk on real
-hardware), guest service requests, multi-language switching, promotions, device
-telemetry, and authentication are all deferred to later phases. The schema is
-already sized for them.
+The Android TV kiosk shell (FreeKiosk / Webview Kiosk on real hardware), guest
+service requests, multi-language TV rendering, promotions, device telemetry,
+and a full multi-user identity system remain deferred. The schema is already
+sized for them.
