@@ -1,12 +1,11 @@
 import { getRoomTvData } from '@/lib/data/getRoomTvData';
 import { formatCheckout } from '@/lib/format';
 import { AutoRefresh } from '@/components/tv/AutoRefresh';
-import { GreetingClock } from '@/components/tv/GreetingClock';
-import { WeatherWidget } from '@/components/tv/WeatherWidget';
-import { HotelInfoCard } from '@/components/tv/HotelInfoCard';
+import { HeroBuildingArt } from '@/components/tv/HeroBuildingArt';
+import { TimeReadout } from '@/components/tv/TimeReadout';
+import { WelcomePanel } from '@/components/tv/WelcomePanel';
 import { RecommendationsList } from '@/components/tv/RecommendationsList';
-import { ReceptionContactCard } from '@/components/tv/ReceptionContactCard';
-import { MovieButton } from '@/components/tv/MovieButton';
+import { ActionDock } from '@/components/tv/ActionDock';
 
 // Always render per-request so AutoRefresh picks up live weather and any
 // Supabase Studio edits; never statically cache the guest screen.
@@ -24,36 +23,39 @@ export default async function RoomTvPage({
   return (
     <>
       <AutoRefresh />
-      <main className="grid h-screen w-screen grid-rows-[auto_1fr_auto] gap-6 overflow-hidden p-10">
-        <GreetingClock
-          guestFirstName={data.guest?.first_name ?? null}
-          welcomeMessage={data.guest?.welcome_message ?? null}
-          specialOccasion={data.guest?.special_occasion ?? null}
-          roomNumber={data.room.room_number}
-          checkoutLabel={checkoutLabel}
-        />
-
-        <section className="grid min-h-0 grid-cols-3 gap-6">
-          <div className="flex min-h-0 flex-col gap-6">
-            <WeatherWidget weather={data.weather} />
-            <HotelInfoCard
+      <div className="flex h-screen w-screen items-center justify-center bg-black">
+        {/* Fixed 16:9 "device screen" — matches the actual TV panel regardless
+            of the outer window's own aspect ratio. */}
+        <div className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[58fr_24fr_18fr] overflow-hidden bg-[color:var(--ground)]">
+          {/* h-full is required at every level down from the grid row — a
+              track's fr size only constrains a child that actually claims
+              h-full; without it, panels fall back to their natural content
+              height and can overflow past the screen's clipped edge. */}
+          <div className="grid h-full min-h-0 grid-cols-[42fr_58fr]">
+            <div className="relative h-full min-w-0 overflow-hidden">
+              <HeroBuildingArt />
+              <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(6,12,12,0.92)_0%,rgba(6,12,12,0.35)_46%,rgba(6,12,12,0)_68%)]" />
+              <TimeReadout weather={data.weather} />
+            </div>
+            <WelcomePanel
+              guestFirstName={data.guest?.first_name ?? null}
+              welcomeMessage={data.guest?.welcome_message ?? null}
+              specialOccasion={data.guest?.special_occasion ?? null}
+              roomNumber={data.room.room_number}
+              checkoutLabel={checkoutLabel}
               hotelSettings={data.hotelSettings}
-              wifiQrDataUrl={data.wifiQrDataUrl}
             />
           </div>
-          <div className="col-span-2 min-h-0">
-            <RecommendationsList recommendations={data.recommendations} />
-          </div>
-        </section>
 
-        <footer className="grid grid-cols-2 gap-6">
-          <ReceptionContactCard
+          <RecommendationsList recommendations={data.recommendations} />
+
+          <ActionDock
             hotelSettings={data.hotelSettings}
+            wifiQrDataUrl={data.wifiQrDataUrl}
             receptionQrDataUrl={data.receptionQrDataUrl}
           />
-          <MovieButton jellyfinUrl={data.hotelSettings.jellyfin_url} />
-        </footer>
-      </main>
+        </div>
+      </div>
     </>
   );
 }

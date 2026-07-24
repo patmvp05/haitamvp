@@ -1,11 +1,29 @@
 @import "tailwindcss";
 
+/* Palette drawn from Haita's own facade at dusk: warm gold window-light
+   against a deep plum evening sky. One bold accent (gold) carries the brand;
+   a dusty rose is used only inside the weather readout as a quiet semantic
+   touch. Dark-only by design — an always-on hotel TV screen, not a page the
+   viewer's OS theme should govern. */
+:root {
+  --ground: #17111a;
+  --ground-2: #1e1620;
+  --panel: #261b27;
+  --hairline: rgba(240, 227, 214, 0.14);
+  --ink: #f5ece1;
+  --ink-dim: #b0a3a6;
+  --ink-faint: #837579;
+  --gold: #d9a24b;
+  --gold-soft: #eec488;
+  --rose: #c98a93;
+}
+
 /* Root font scales with viewport width so the TV-safe `rem`-based type stays
    readable across 720p and 1080p panels. */
 html {
   font-size: clamp(18px, 1.4vw, 26px);
-  background-color: #0a0a0a;
-  color: #fafafa;
+  background-color: var(--ground);
+  color: var(--ink);
 }
 
 body {
@@ -16,4 +34,20 @@ body {
   /* The guest screen is designed to fit one viewport; the page body never
      scrolls (individual panels manage their own overflow). */
   overflow: hidden;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+.animate-ticker { animation: ticker 24s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker { animation: none; padding-left: 0 !important; }
+}
+
+/* Constrained-height windows (short browser chrome, tablets in landscape):
+   drop recommendation descriptions first — name + distance/category is still
+   a complete, useful card. */
+@media (max-height: 750px) {
+  .rec-desc { display: none; }
 }

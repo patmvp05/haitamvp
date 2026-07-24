@@ -13,10 +13,10 @@ insert into hotel_settings (
   reception_phone, reception_contact_label, reception_contact_url, jellyfin_url
 ) values (
   1,
-  'Saigon Riverside Boutique Hotel',
-  'SaigonRiverside_Guest',
+  'Haita',
+  'Haita_Guest',
   'Welcome2026!',
-  '6:30 AM – 9:30 AM, Rooftop Terrace',
+  '6:30 AM – 9:30 AM',
   '11:00',
   '+84 28 1234 5678',
   'Chat with Reception on Zalo',
@@ -40,7 +40,7 @@ with new_guest as (
   insert into guests (first_name, last_name, preferred_language, welcome_message, special_occasion)
   values (
     'David', 'Nguyen', 'en',
-    'Welcome back to Saigon, David! We hope you enjoy your stay.',
+    'Welcome back, David. We hope you enjoy your stay with us at Haita — and that tonight feels worth celebrating.',
     'Anniversary'
   )
   returning id

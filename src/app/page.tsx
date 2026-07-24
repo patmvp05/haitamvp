@@ -8,17 +8,17 @@ import { ROOM_NUMBERS } from '@/lib/constants';
  */
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-10 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[color:var(--ground)] p-10 text-center">
       <div>
         <h1 className="text-4xl font-bold">Haita — Hotel Guest TV</h1>
-        <p className="mt-2 text-neutral-400">Open a room screen:</p>
+        <p className="mt-2 text-[color:var(--ink-dim)]">Open a room screen:</p>
       </div>
       <div className="flex flex-wrap justify-center gap-4">
         {ROOM_NUMBERS.map((room) => (
           <Link
             key={room}
             href={`/tv/${room}`}
-            className="rounded-xl bg-neutral-800 px-6 py-4 text-2xl no-underline transition-colors hover:bg-neutral-700"
+            className="rounded-xl bg-[color:var(--panel)] px-6 py-4 text-2xl no-underline transition-colors hover:brightness-110"
           >
             /tv/{room}
           </Link>
