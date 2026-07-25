@@ -1,12 +1,6 @@
 import { getRoomTvData } from '@/lib/data/getRoomTvData';
-import { formatCheckout } from '@/lib/format';
 import { AutoRefresh } from '@/components/tv/AutoRefresh';
-import { HeroBuildingArt } from '@/components/tv/HeroBuildingArt';
-import { TimeReadout } from '@/components/tv/TimeReadout';
-import { WelcomePanel } from '@/components/tv/WelcomePanel';
-import { RecommendationsList } from '@/components/tv/RecommendationsList';
-import { ActionDock } from '@/components/tv/ActionDock';
-import { TvDpadNavigation } from '@/components/tv/TvDpadNavigation';
+import { TvExperience } from '@/components/tv/TvExperience';
 
 // Always render per-request so AutoRefresh picks up live weather and any
 // Supabase Studio edits; never statically cache the guest screen.
@@ -19,48 +13,11 @@ export default async function RoomTvPage({
 }) {
   const { room } = await params;
   const data = await getRoomTvData(room);
-  const checkoutLabel = formatCheckout(data.room.checkout_date, data.room.checkout_time);
 
   return (
     <>
       <AutoRefresh />
-      <TvDpadNavigation />
-      <div className="flex h-screen w-screen items-center justify-center bg-[color:var(--ground)]">
-        {/* Fixed 16:9 "device screen" — matches the actual TV panel regardless
-            of the outer window's own aspect ratio. */}
-        <div
-          data-tv-screen
-          className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[62fr_24fr_14fr] overflow-hidden bg-[color:var(--ground)]"
-        >
-          {/* h-full is required at every level down from the grid row — a
-              track's fr size only constrains a child that actually claims
-              h-full; without it, panels fall back to their natural content
-              height and can overflow past the screen's clipped edge. */}
-          <div className="grid h-full min-h-0 grid-cols-[33fr_67fr]">
-            <div className="relative h-full min-w-0 overflow-hidden">
-              <HeroBuildingArt />
-              <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(14,9,16,0.94)_0%,rgba(14,9,16,0.38)_44%,rgba(14,9,16,0.04)_72%)]" />
-              <TimeReadout weather={data.weather} />
-            </div>
-            <WelcomePanel
-              guestFirstName={data.guest?.first_name ?? null}
-              welcomeMessage={data.guest?.welcome_message ?? null}
-              specialOccasion={data.guest?.special_occasion ?? null}
-              roomNumber={data.room.room_number}
-              checkoutLabel={checkoutLabel}
-              hotelSettings={data.hotelSettings}
-            />
-          </div>
-
-          <RecommendationsList recommendations={data.recommendations} />
-
-          <ActionDock
-            hotelSettings={data.hotelSettings}
-            wifiQrDataUrl={data.wifiQrDataUrl}
-            receptionQrDataUrl={data.receptionQrDataUrl}
-          />
-        </div>
-      </div>
+      <TvExperience data={data} />
     </>
   );
 }

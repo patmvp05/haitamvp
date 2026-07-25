@@ -18,6 +18,7 @@ type InteractionStyle = CSSProperties & {
 };
 
 interface FocusableCardProps {
+  id?: string;
   href?: string;
   /** Opens in a new tab with safe rel attributes (for outbound links). */
   external?: boolean;
@@ -26,6 +27,9 @@ interface FocusableCardProps {
   className?: string;
   children: React.ReactNode;
   'aria-label'?: string;
+  'aria-expanded'?: boolean;
+  'aria-haspopup'?: 'dialog';
+  'aria-pressed'?: boolean;
   autoFocus?: boolean;
   tvSection?: TvFocusSection;
   tvIndex?: number;

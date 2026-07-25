@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { SunIcon } from './icons';
+import { useTvLanguage } from './TvLanguageProvider';
 import type { WeatherSnapshot } from '@/lib/weather';
+import {
+  getTvLocale,
+  translateLocation,
+  translateWeather,
+} from '@/lib/i18n/tv';
 
 interface TimeReadoutProps {
   weather: WeatherSnapshot | null;
@@ -15,6 +21,7 @@ interface TimeReadoutProps {
  * initial render may differ from the client's local time.
  */
 export function TimeReadout({ weather }: TimeReadoutProps) {
+  const { language, messages } = useTvLanguage();
   const [now, setNow] = useState<Date>(() => new Date());
 
   useEffect(() => {
@@ -24,8 +31,22 @@ export function TimeReadout({ weather }: TimeReadoutProps) {
     return () => clearInterval(id);
   }, []);
 
-  const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  const date = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const locale = getTvLocale(language);
+  const time = now.toLocaleTimeString(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  const date = now.toLocaleDateString(locale, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+  const condition = weather
+    ? translateWeather(weather.conditionCode, language)
+    : null;
+  const location = weather
+    ? translateLocation(weather.locationLabel, language)
+    : null;
 
   return (
     <div className="absolute inset-x-[6%] bottom-[6%]">
@@ -47,11 +68,11 @@ export function TimeReadout({ weather }: TimeReadoutProps) {
           <>
             <span className="font-mono font-bold tabular-nums">{weather.temperatureC}°C</span>
             <span className="text-[color:var(--ink-dim)]">
-              {weather.conditionLabel} · {weather.locationLabel}
+              {condition} · {location}
             </span>
           </>
         ) : (
-          <span className="text-[color:var(--ink-dim)]">Weather unavailable</span>
+          <span className="text-[color:var(--ink-dim)]">{messages.weatherUnavailable}</span>
         )}
       </div>
     </div>

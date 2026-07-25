@@ -1,8 +1,13 @@
+'use client';
+
 import { FocusableCard } from './FocusableCard';
+import { LanguageSelector } from './LanguageSelector';
 import { QrImage } from './QrImage';
 import { Ticker } from './Ticker';
+import { useTvLanguage } from './TvLanguageProvider';
 import { WifiIcon, ChatIcon, PlayIcon } from './icons';
 import type { HotelSettingsRecord } from '@/lib/data/types';
+import { fillMessage, formatTvHours } from '@/lib/i18n/tv';
 
 const ACTION =
   'tv-focusable-inset my-[0.35rem] flex min-w-[clamp(7.5rem,10vw,10rem)] items-center justify-center gap-[0.6em] border-l border-[color:var(--hairline)] bg-[color:var(--ground-2)] px-[clamp(0.7rem,1.4vw,1.2rem)] text-[color:var(--ink)]';
@@ -16,15 +21,22 @@ interface ActionDockProps {
 }
 
 export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }: ActionDockProps) {
+  const { language, messages } = useTvLanguage();
+  const breakfastHours = hotelSettings.breakfast_hours
+    ? formatTvHours(hotelSettings.breakfast_hours, language)
+    : null;
   const tickerParts = [
-    hotelSettings.breakfast_hours && `Breakfast served ${hotelSettings.breakfast_hours}`,
-    'Ask reception about our airport pickup service',
-    'Late checkout available on request',
+    breakfastHours &&
+      fillMessage(messages.breakfastServed, { hours: breakfastHours }),
+    messages.airportPickup,
+    messages.lateCheckout,
   ].filter((part): part is string => Boolean(part));
   const receptionIndex = hotelSettings.wifi_ssid ? 1 : 0;
   const moviesIndex =
     (hotelSettings.wifi_ssid ? 1 : 0) +
     (hotelSettings.reception_contact_url ? 1 : 0);
+  const languageIndex =
+    moviesIndex + (hotelSettings.jellyfin_url ? 1 : 0);
 
   return (
     <div className="grid h-full min-h-0 grid-cols-[1fr_auto] items-center overflow-hidden border-t border-[color:var(--hairline)] bg-[color:var(--ground-2)] pl-[clamp(1.2rem,3vw,2.4rem)]">
@@ -41,12 +53,12 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
             focusScale={1.035}
             pressedScale={0.985}
             className={ACTION}
-            aria-label="Wi-Fi details"
+            aria-label={messages.wifiDetails}
           >
             <WifiIcon className="h-[1.2em] w-[1.2em] shrink-0 text-[color:var(--gold)]" />
             <span className={LABEL}>Wi-Fi</span>
             {wifiQrDataUrl && (
-              <QrImage dataUrl={wifiQrDataUrl} alt="Scan to join the Wi-Fi network" size={36} />
+              <QrImage dataUrl={wifiQrDataUrl} alt={messages.joinWifi} size={36} />
             )}
           </FocusableCard>
         )}
@@ -60,12 +72,12 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
             focusScale={1.035}
             pressedScale={0.985}
             className={ACTION}
-            aria-label="Contact reception"
+            aria-label={messages.contactReception}
           >
             <ChatIcon className="h-[1.2em] w-[1.2em] shrink-0 text-[color:var(--gold)]" />
-            <span className={LABEL}>Reception</span>
+            <span className={LABEL}>{messages.reception}</span>
             {receptionQrDataUrl && (
-              <QrImage dataUrl={receptionQrDataUrl} alt="Scan to contact reception" size={36} />
+              <QrImage dataUrl={receptionQrDataUrl} alt={messages.scanReception} size={36} />
             )}
           </FocusableCard>
         )}
@@ -79,12 +91,18 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
             focusScale={1.035}
             pressedScale={0.985}
             className={ACTION}
-            aria-label="Watch movies"
+            aria-label={messages.watchMovies}
           >
             <PlayIcon className="h-[1.2em] w-[1.2em] shrink-0 text-[color:var(--gold)]" />
-            <span className={LABEL}>Movies</span>
+            <span className={LABEL}>{messages.movies}</span>
           </FocusableCard>
         )}
+
+        <LanguageSelector
+          tvIndex={languageIndex}
+          actionClassName={ACTION}
+          labelClassName={LABEL}
+        />
       </div>
     </div>
   );

@@ -1,13 +1,25 @@
+'use client';
+
 import { GiftIcon } from './icons';
 import { FocusableCard } from './FocusableCard';
+import { useTvLanguage } from './TvLanguageProvider';
 import type { HotelSettingsRecord } from '@/lib/data/types';
+import {
+  fillMessage,
+  formatTvCheckout,
+  formatTvHours,
+  getGreetingMessage,
+  translateOccasion,
+  translateWelcomeMessage,
+} from '@/lib/i18n/tv';
 
 interface WelcomePanelProps {
   guestFirstName: string | null;
   welcomeMessage: string | null;
   specialOccasion: string | null;
   roomNumber: string;
-  checkoutLabel: string | null;
+  checkoutDate: string | null;
+  checkoutTime: string | null;
   hotelSettings: HotelSettingsRecord;
 }
 
@@ -29,10 +41,25 @@ export function WelcomePanel({
   welcomeMessage,
   specialOccasion,
   roomNumber,
-  checkoutLabel,
+  checkoutDate,
+  checkoutTime,
   hotelSettings,
 }: WelcomePanelProps) {
-  const breakfast = hotelSettings.breakfast_hours;
+  const { language, messages } = useTvLanguage();
+  const breakfast = hotelSettings.breakfast_hours
+    ? formatTvHours(hotelSettings.breakfast_hours, language)
+    : null;
+  const checkoutLabel = formatTvCheckout(
+    checkoutDate,
+    checkoutTime,
+    language,
+  );
+  const localizedOccasion = specialOccasion
+    ? translateOccasion(specialOccasion, language)
+    : null;
+  const localizedWelcomeMessage = welcomeMessage
+    ? translateWelcomeMessage(welcomeMessage, language)
+    : null;
 
   return (
     <FocusableCard
@@ -40,7 +67,7 @@ export function WelcomePanel({
       tvIndex={0}
       focusScale={1}
       pressedScale={0.995}
-      aria-label={`Welcome and stay details for room ${roomNumber}`}
+      aria-label={fillMessage(messages.roomWelcomeLabel, { room: roomNumber })}
       className="tv-focusable-inset relative grid h-full min-h-0 min-w-0 grid-rows-[auto_1fr] overflow-hidden border-l border-[color:var(--hairline)] bg-[color:var(--panel)] p-[clamp(1.2rem,3vw,2.5rem)_clamp(1.4rem,3.4vw,3rem)]"
     >
       <div className="flex items-baseline justify-between gap-6">
@@ -48,35 +75,41 @@ export function WelcomePanel({
           HAITA
         </span>
         <span className="text-[clamp(0.72rem,0.92vw,0.84rem)] text-[color:var(--ink-dim)]">
-          Room {roomNumber}
+          {messages.room} {roomNumber}
         </span>
       </div>
 
       <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(16rem,0.56fr)] items-end gap-[clamp(2rem,4vw,4rem)]">
         <div className="min-w-0 self-center">
           <div className="text-[clamp(0.78rem,1.05vw,0.94rem)] text-[color:var(--ink-dim)]">
-            Good evening
+            <span suppressHydrationWarning>
+              {getGreetingMessage(language, new Date())}
+            </span>
           </div>
           <h1 className="mt-[0.2em] text-balance text-[clamp(2.4rem,4.3vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.045em]">
-            {guestFirstName ? `Welcome, ${guestFirstName}` : 'Welcome'}
+            {guestFirstName
+              ? fillMessage(messages.welcomeGuest, { name: guestFirstName })
+              : messages.welcome}
           </h1>
-          {specialOccasion && (
+          {localizedOccasion && (
             <div className="mt-[1em] flex items-center gap-[0.55em] text-[clamp(0.78rem,1vw,0.9rem)] font-semibold text-[color:var(--gold-soft)]">
               <GiftIcon className="h-[1em] w-[1em]" />
-              {specialOccasion} Stay
+              {fillMessage(messages.occasionStay, {
+                occasion: localizedOccasion,
+              })}
             </div>
           )}
-          {welcomeMessage && (
+          {localizedWelcomeMessage && (
             <p className="mt-[0.9em] line-clamp-2 max-w-[42ch] text-[clamp(0.86rem,1.15vw,1.05rem)] leading-relaxed text-[color:var(--ink-dim)]">
-              {welcomeMessage}
+              {localizedWelcomeMessage}
             </p>
           )}
         </div>
 
         <dl className="min-w-0 border-l border-[color:var(--hairline)] pl-[clamp(1.2rem,2.6vw,2.2rem)]">
-          {checkoutLabel && <Stat label="Checkout" value={checkoutLabel} />}
+          {checkoutLabel && <Stat label={messages.checkout} value={checkoutLabel} />}
           {hotelSettings.wifi_ssid && <Stat label="Wi-Fi" value={hotelSettings.wifi_ssid} />}
-          {breakfast && <Stat label="Breakfast" value={breakfast} />}
+          {breakfast && <Stat label={messages.breakfast} value={breakfast} />}
         </dl>
       </div>
     </FocusableCard>
