@@ -19,7 +19,7 @@ export function HotelSystemsUnavailable({ onRetry }: { onRetry: () => void }) {
       <FocusableCard
         onClick={onRetry}
         autoFocus
-        className="rounded-2xl border border-[color:var(--hairline)] bg-[color:var(--panel)] px-10 py-5 text-2xl font-semibold text-[color:var(--ink)]"
+        className="border border-[color:var(--hairline)] bg-[color:var(--panel)] px-10 py-5 text-2xl font-semibold text-[color:var(--ink)]"
       >
         Try Again
       </FocusableCard>

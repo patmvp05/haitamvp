@@ -19,7 +19,7 @@ export function QrImage({ dataUrl, alt, size = 140 }: QrImageProps) {
       alt={alt}
       width={size}
       height={size}
-      className="rounded-lg bg-white p-2"
+      className="bg-white p-2"
     />
   );
 }

@@ -25,21 +25,21 @@ export default async function RoomTvPage({
     <>
       <AutoRefresh />
       <TvDpadNavigation />
-      <div className="flex h-screen w-screen items-center justify-center bg-black">
+      <div className="flex h-screen w-screen items-center justify-center bg-[color:var(--ground)]">
         {/* Fixed 16:9 "device screen" — matches the actual TV panel regardless
             of the outer window's own aspect ratio. */}
         <div
           data-tv-screen
-          className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[58fr_24fr_18fr] overflow-hidden bg-[color:var(--ground)]"
+          className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[62fr_24fr_14fr] overflow-hidden bg-[color:var(--ground)]"
         >
           {/* h-full is required at every level down from the grid row — a
               track's fr size only constrains a child that actually claims
               h-full; without it, panels fall back to their natural content
               height and can overflow past the screen's clipped edge. */}
-          <div className="grid h-full min-h-0 grid-cols-[42fr_58fr]">
+          <div className="grid h-full min-h-0 grid-cols-[33fr_67fr]">
             <div className="relative h-full min-w-0 overflow-hidden">
               <HeroBuildingArt />
-              <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(6,12,12,0.92)_0%,rgba(6,12,12,0.35)_46%,rgba(6,12,12,0)_68%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(14,9,16,0.94)_0%,rgba(14,9,16,0.38)_44%,rgba(14,9,16,0.04)_72%)]" />
               <TimeReadout weather={data.weather} />
             </div>
             <WelcomePanel

@@ -13,13 +13,13 @@ interface WelcomePanelProps {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <div className="text-[clamp(0.62rem,0.85vw,0.72rem)] uppercase tracking-[0.12em] text-[color:var(--ink-faint)]">
+    <div className="border-t border-[color:var(--hairline)] py-[clamp(0.55rem,1.4vh,0.9rem)] first:border-t-0">
+      <dt className="text-[clamp(0.68rem,0.86vw,0.8rem)] text-[color:var(--ink-faint)]">
         {label}
-      </div>
-      <div className="mt-1 font-mono text-[clamp(1.05rem,1.7vw,1.4rem)] font-bold tabular-nums">
+      </dt>
+      <dd className="mt-[0.15em] whitespace-nowrap text-[clamp(0.92rem,1.25vw,1.15rem)] font-semibold tabular-nums">
         {value}
-      </div>
+      </dd>
     </div>
   );
 }
@@ -38,60 +38,46 @@ export function WelcomePanel({
     <FocusableCard
       tvSection="hero"
       tvIndex={0}
-      focusScale={1.025}
-      pressedScale={0.99}
+      focusScale={1}
+      pressedScale={0.995}
       aria-label={`Welcome and stay details for room ${roomNumber}`}
-      className="tv-focusable-inset relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[color:var(--panel)] p-[clamp(1rem,2.6vw,2.1rem)_clamp(1.2rem,3vw,2.4rem)]"
+      className="tv-focusable-inset relative grid h-full min-h-0 min-w-0 grid-rows-[auto_1fr] overflow-hidden border-l border-[color:var(--hairline)] bg-[color:var(--panel)] p-[clamp(1.2rem,3vw,2.5rem)_clamp(1.4rem,3.4vw,3rem)]"
     >
-      {/* Large faint monogram fills the panel's quiet middle ground rather
-          than leaving it empty — a device drawn on the brand, not around it. */}
-      <svg
-        aria-hidden="true"
-        width="100"
-        height="100"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid meet"
-        className="pointer-events-none absolute right-[-4%] top-[6%] aspect-square w-[62%] text-[color:var(--gold)] opacity-[0.07]"
-      >
-        <text x="50" y="74" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif" fontSize="92" fontWeight="700" fill="currentColor">
-          H
-        </text>
-      </svg>
-
-      <div className="relative flex items-baseline gap-[0.6em]">
-        <span className="text-[clamp(0.72rem,1vw,0.85rem)] font-bold uppercase tracking-[0.22em] text-[color:var(--gold-soft)]">
-          Haita
+      <div className="flex items-baseline justify-between gap-6">
+        <span className="font-serif text-[clamp(0.82rem,1.15vw,1rem)] tracking-[0.24em] text-[color:var(--gold-soft)]">
+          HAITA
         </span>
-        <span className="h-px flex-1 bg-[color:var(--hairline)]" />
-        <span className="font-mono text-[clamp(0.68rem,0.95vw,0.8rem)] tracking-[0.08em] text-[color:var(--ink-dim)]">
-          ROOM {roomNumber}
+        <span className="text-[clamp(0.72rem,0.92vw,0.84rem)] text-[color:var(--ink-dim)]">
+          Room {roomNumber}
         </span>
       </div>
 
-      <div className="relative mt-[clamp(0.9rem,2.6vh,1.8rem)] min-h-0 overflow-hidden">
-        <div className="text-[clamp(0.72rem,1vw,0.88rem)] tracking-[0.04em] text-[color:var(--ink-dim)]">
-          Good evening
+      <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(16rem,0.56fr)] items-end gap-[clamp(2rem,4vw,4rem)]">
+        <div className="min-w-0 self-center">
+          <div className="text-[clamp(0.78rem,1.05vw,0.94rem)] text-[color:var(--ink-dim)]">
+            Good evening
+          </div>
+          <h1 className="mt-[0.2em] text-balance text-[clamp(2.4rem,4.3vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.045em]">
+            {guestFirstName ? `Welcome, ${guestFirstName}` : 'Welcome'}
+          </h1>
+          {specialOccasion && (
+            <div className="mt-[1em] flex items-center gap-[0.55em] text-[clamp(0.78rem,1vw,0.9rem)] font-semibold text-[color:var(--gold-soft)]">
+              <GiftIcon className="h-[1em] w-[1em]" />
+              {specialOccasion} Stay
+            </div>
+          )}
+          {welcomeMessage && (
+            <p className="mt-[0.9em] line-clamp-2 max-w-[42ch] text-[clamp(0.86rem,1.15vw,1.05rem)] leading-relaxed text-[color:var(--ink-dim)]">
+              {welcomeMessage}
+            </p>
+          )}
         </div>
-        <h1 className="mt-1 text-balance text-[clamp(1.7rem,3.9vw,3rem)] font-extrabold leading-[1.02] tracking-[-0.01em]">
-          {guestFirstName ? `Welcome, ${guestFirstName}` : 'Welcome'}
-        </h1>
-        {specialOccasion && (
-          <span className="mt-3 inline-flex items-center gap-[0.45em] rounded-full border border-[color:var(--gold)] px-[0.85em] py-[0.32em] text-[clamp(0.72rem,1vw,0.85rem)] font-bold tracking-[0.03em] text-[color:var(--gold-soft)]">
-            <GiftIcon className="h-[1em] w-[1em]" />
-            {specialOccasion} Stay
-          </span>
-        )}
-        {welcomeMessage && (
-          <p className="mt-[0.85em] line-clamp-2 max-w-[46ch] text-[clamp(0.82rem,1.15vw,1rem)] text-[color:var(--ink-dim)]">
-            {welcomeMessage}
-          </p>
-        )}
-      </div>
 
-      <div className="relative mt-auto flex flex-none gap-[clamp(1.4rem,3vw,2.6rem)] border-t border-[color:var(--hairline)] pt-[clamp(0.8rem,2vh,1.4rem)]">
-        {checkoutLabel && <Stat label="Checkout" value={checkoutLabel} />}
-        {hotelSettings.wifi_ssid && <Stat label="Wi-Fi Network" value={hotelSettings.wifi_ssid} />}
-        {breakfast && <Stat label="Breakfast" value={breakfast} />}
+        <dl className="min-w-0 border-l border-[color:var(--hairline)] pl-[clamp(1.2rem,2.6vw,2.2rem)]">
+          {checkoutLabel && <Stat label="Checkout" value={checkoutLabel} />}
+          {hotelSettings.wifi_ssid && <Stat label="Wi-Fi" value={hotelSettings.wifi_ssid} />}
+          {breakfast && <Stat label="Breakfast" value={breakfast} />}
+        </dl>
       </div>
     </FocusableCard>
   );

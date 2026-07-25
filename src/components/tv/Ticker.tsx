@@ -1,17 +1,18 @@
-import { RadioIcon } from './icons';
-
 /**
- * Scrolling ambient-info strip (breakfast hours, service reminders). Pure CSS
- * animation defined in globals.css (`.animate-ticker`), which itself respects
- * prefers-reduced-motion — no client JS needed for the scroll itself.
+ * Ambient service notes. The full-width TV dock gives them room to remain
+ * still, avoiding ornamental motion on an otherwise calm screen.
  */
-export function Ticker({ text }: { text: string }) {
+export function Ticker({ items }: { items: string[] }) {
   return (
-    <div className="flex min-w-0 items-center gap-[0.7em] text-[clamp(0.74rem,1vw,0.88rem)] text-[color:var(--ink-dim)]">
-      <RadioIcon className="h-[1.1em] w-[1.1em] shrink-0 text-[color:var(--rose)]" />
-      <div className="relative min-w-0 flex-1 overflow-hidden whitespace-nowrap">
-        <span className="animate-ticker inline-block pl-[100%]">{text}</span>
-      </div>
+    <div className="flex min-w-0 items-center overflow-hidden text-[clamp(0.7rem,0.9vw,0.82rem)] text-[color:var(--ink-dim)]">
+      {items.map((item) => (
+        <span
+          key={item}
+          className="min-w-0 truncate border-l border-[color:var(--hairline)] px-[clamp(0.7rem,1.4vw,1.2rem)] first:border-l-0 first:pl-0"
+        >
+          {item}
+        </span>
+      ))}
     </div>
   );
 }

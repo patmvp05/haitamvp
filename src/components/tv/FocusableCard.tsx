@@ -35,9 +35,9 @@ interface FocusableCardProps {
 
 /**
  * Shared TV focus contract for links, buttons, and browsable information
- * surfaces. Focus combines scale, outline, and brand-colored glow; Enter/Select
- * and pointer presses briefly scale down and intensify the glow so "pressed" is
- * visibly distinct from merely resting in the focused state.
+ * surfaces. Focus combines scale, outline, and a surface shift; Enter/Select
+ * and pointer presses briefly scale down and strengthen the inset edge so
+ * "pressed" is visibly distinct from merely resting in the focused state.
  */
 export function FocusableCard({
   href,

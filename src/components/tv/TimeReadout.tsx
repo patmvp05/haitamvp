@@ -31,17 +31,17 @@ export function TimeReadout({ weather }: TimeReadoutProps) {
     <div className="absolute inset-x-[6%] bottom-[6%]">
       <div
         suppressHydrationWarning
-        className="font-mono text-[clamp(2.1rem,4.6vw,3.6rem)] font-bold leading-none tabular-nums"
+        className="font-mono text-[clamp(2.2rem,4.4vw,3.7rem)] font-semibold leading-none tracking-[-0.05em] tabular-nums"
       >
         {time}
       </div>
       <div
         suppressHydrationWarning
-        className="mt-2 text-[clamp(0.78rem,1.2vw,1rem)] uppercase tracking-[0.06em] text-[color:var(--ink-dim)]"
+        className="mt-2 text-[clamp(0.76rem,1vw,0.9rem)] text-[color:var(--ink-dim)]"
       >
         {date}
       </div>
-      <div className="mt-3 flex items-center gap-[0.6em] text-[clamp(0.85rem,1.3vw,1.05rem)]">
+      <div className="mt-3 flex items-center gap-[0.6em] text-[clamp(0.8rem,1.08vw,0.96rem)]">
         <SunIcon className="h-[1.3em] w-[1.3em] shrink-0 text-[color:var(--rose)]" />
         {weather ? (
           <>
