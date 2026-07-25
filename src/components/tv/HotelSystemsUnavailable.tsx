@@ -1,6 +1,7 @@
 'use client';
 
 import { FALLBACK_RECEPTION_PHONE } from '@/lib/constants';
+import { FocusableCard } from './FocusableCard';
 
 /**
  * Fallback shown when the guest screen can't load its data. Kept calm and
@@ -15,13 +16,13 @@ export function HotelSystemsUnavailable({ onRetry }: { onRetry: () => void }) {
         We can&apos;t reach the hotel systems right now. Please contact reception at{' '}
         <span className="font-semibold text-[color:var(--gold-soft)]">{FALLBACK_RECEPTION_PHONE}</span>.
       </p>
-      <button
-        type="button"
+      <FocusableCard
         onClick={onRetry}
-        className="rounded-2xl border-4 border-transparent bg-[color:var(--panel)] px-10 py-5 text-2xl font-semibold text-[color:var(--ink)] outline-none transition-transform duration-150 hover:scale-105 hover:border-[color:var(--gold)] focus:scale-105 focus:border-[color:var(--gold)] focus:shadow-[0_0_0_6px_rgba(217,162,75,0.3)] focus-visible:scale-105 focus-visible:border-[color:var(--gold)]"
+        autoFocus
+        className="rounded-2xl border border-[color:var(--hairline)] bg-[color:var(--panel)] px-10 py-5 text-2xl font-semibold text-[color:var(--ink)]"
       >
         Try Again
-      </button>
+      </FocusableCard>
     </main>
   );
 }

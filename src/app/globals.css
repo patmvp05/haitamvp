@@ -6,6 +6,8 @@
    touch. Dark-only by design — an always-on hotel TV screen, not a page the
    viewer's OS theme should govern. */
 :root {
+  /* CSS hex/rgb colors are explicitly sRGB; no display-p3() or other
+     wide-gamut-only values are used, keeping output stable across TV models. */
   --ground: #17111a;
   --ground-2: #1e1620;
   --panel: #261b27;
@@ -16,6 +18,7 @@
   --gold: #d9a24b;
   --gold-soft: #eec488;
   --rose: #c98a93;
+  color-scheme: dark;
 }
 
 /* Root font scales with viewport width so the TV-safe `rem`-based type stays
@@ -36,6 +39,64 @@ body {
   overflow: hidden;
 }
 
+/* Android TV focus system: focused surfaces combine scale + outline + glow,
+   and remote Select/pointer-down has a separate, shorter pressed pose. The
+   outline supplies a non-color-only shape cue while the scale supplies motion. */
+.tv-focusable {
+  position: relative;
+  z-index: 0;
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+  transform: scale(1);
+  transform-origin: center;
+  transition:
+    transform 100ms ease-out,
+    outline-color 100ms ease-out,
+    outline-offset 100ms ease-out,
+    box-shadow 100ms ease-out;
+  will-change: transform;
+}
+
+.tv-focusable:hover,
+.tv-focusable:focus,
+.tv-focusable:focus-visible {
+  z-index: 10;
+  outline-color: var(--gold);
+  transform: scale(var(--tv-focus-scale, 1.05));
+  box-shadow:
+    0 0 0 4px rgba(217, 162, 75, 0.2),
+    0 0 24px rgba(217, 162, 75, 0.48);
+}
+
+.tv-focusable-inset:hover,
+.tv-focusable-inset:focus,
+.tv-focusable-inset:focus-visible {
+  outline-offset: -5px;
+}
+
+.tv-focusable[data-pressed="true"] {
+  z-index: 11;
+  outline-color: var(--gold-soft);
+  outline-offset: 1px;
+  transform: scale(var(--tv-pressed-scale, 0.98));
+  box-shadow:
+    0 0 0 6px rgba(217, 162, 75, 0.36),
+    0 0 32px rgba(217, 162, 75, 0.72);
+}
+
+.tv-recommendations-row {
+  scroll-padding-inline: 1rem;
+  scrollbar-width: none;
+}
+
+.tv-recommendations-row .tv-focusable {
+  scroll-margin-inline: 1rem;
+}
+
+.tv-recommendations-row::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes ticker {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }
@@ -43,11 +104,5 @@ body {
 .animate-ticker { animation: ticker 24s linear infinite; }
 @media (prefers-reduced-motion: reduce) {
   .animate-ticker { animation: none; padding-left: 0 !important; }
-}
-
-/* Constrained-height windows (short browser chrome, tablets in landscape):
-   drop recommendation descriptions first — name + distance/category is still
-   a complete, useful card. */
-@media (max-height: 750px) {
-  .rec-desc { display: none; }
+  .tv-focusable { transition: none; }
 }

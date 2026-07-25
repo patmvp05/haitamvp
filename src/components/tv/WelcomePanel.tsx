@@ -1,4 +1,5 @@
 import { GiftIcon } from './icons';
+import { FocusableCard } from './FocusableCard';
 import type { HotelSettingsRecord } from '@/lib/data/types';
 
 interface WelcomePanelProps {
@@ -34,7 +35,14 @@ export function WelcomePanel({
   const breakfast = hotelSettings.breakfast_hours;
 
   return (
-    <div className="relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[color:var(--panel)] p-[clamp(1rem,2.6vw,2.1rem)_clamp(1.2rem,3vw,2.4rem)]">
+    <FocusableCard
+      tvSection="hero"
+      tvIndex={0}
+      focusScale={1.025}
+      pressedScale={0.99}
+      aria-label={`Welcome and stay details for room ${roomNumber}`}
+      className="tv-focusable-inset relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[color:var(--panel)] p-[clamp(1rem,2.6vw,2.1rem)_clamp(1.2rem,3vw,2.4rem)]"
+    >
       {/* Large faint monogram fills the panel's quiet middle ground rather
           than leaving it empty — a device drawn on the brand, not around it. */}
       <svg
@@ -85,6 +93,6 @@ export function WelcomePanel({
         {hotelSettings.wifi_ssid && <Stat label="Wi-Fi Network" value={hotelSettings.wifi_ssid} />}
         {breakfast && <Stat label="Breakfast" value={breakfast} />}
       </div>
-    </div>
+    </FocusableCard>
   );
 }

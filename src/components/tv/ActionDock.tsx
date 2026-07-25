@@ -19,14 +19,26 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
     'Ask reception about our airport pickup service',
     'Late checkout available on request',
   ].filter(Boolean);
+  const receptionIndex = hotelSettings.wifi_ssid ? 1 : 0;
+  const moviesIndex =
+    (hotelSettings.wifi_ssid ? 1 : 0) +
+    (hotelSettings.reception_contact_url ? 1 : 0);
 
   return (
     <div className="grid h-full min-h-0 grid-cols-[1fr_auto] items-center gap-4 overflow-hidden border-t border-[color:var(--hairline)] bg-[color:var(--ground-2)] px-[clamp(1.2rem,3vw,2.4rem)]">
       <Ticker text={tickerParts.join('  ·  ')} />
 
-      <div className="flex flex-none items-center gap-[clamp(0.5rem,1.4vw,0.9rem)] py-[clamp(0.6rem,1.6vh,0.9rem)]">
+      <div
+        data-tv-focus-group="actions"
+        className="flex flex-none items-center gap-[clamp(0.5rem,1.4vw,0.9rem)] py-[clamp(0.6rem,1.6vh,0.9rem)]"
+      >
         {hotelSettings.wifi_ssid && (
-          <FocusableCard href="#" className={PILL} aria-label="Wi-Fi details">
+          <FocusableCard
+            tvSection="actions"
+            tvIndex={0}
+            className={PILL}
+            aria-label="Wi-Fi details"
+          >
             <WifiIcon className="h-[1.2em] w-[1.2em] shrink-0 text-[color:var(--gold)]" />
             <span className={LABEL}>Wi-Fi</span>
             {wifiQrDataUrl && (
@@ -39,6 +51,8 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
           <FocusableCard
             href={hotelSettings.reception_contact_url}
             external
+            tvSection="actions"
+            tvIndex={receptionIndex}
             className={PILL}
             aria-label="Contact reception"
           >
@@ -54,6 +68,8 @@ export function ActionDock({ hotelSettings, wifiQrDataUrl, receptionQrDataUrl }:
           <FocusableCard
             href={hotelSettings.jellyfin_url}
             external
+            tvSection="actions"
+            tvIndex={moviesIndex}
             className={`${PILL} bg-[color:var(--gold)] py-[0.5em] pl-[1.1em] pr-[1.1em] text-[color:var(--ground)]`}
             aria-label="Watch movies"
           >

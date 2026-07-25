@@ -6,6 +6,7 @@ import { TimeReadout } from '@/components/tv/TimeReadout';
 import { WelcomePanel } from '@/components/tv/WelcomePanel';
 import { RecommendationsList } from '@/components/tv/RecommendationsList';
 import { ActionDock } from '@/components/tv/ActionDock';
+import { TvDpadNavigation } from '@/components/tv/TvDpadNavigation';
 
 // Always render per-request so AutoRefresh picks up live weather and any
 // Supabase Studio edits; never statically cache the guest screen.
@@ -23,10 +24,14 @@ export default async function RoomTvPage({
   return (
     <>
       <AutoRefresh />
+      <TvDpadNavigation />
       <div className="flex h-screen w-screen items-center justify-center bg-black">
         {/* Fixed 16:9 "device screen" — matches the actual TV panel regardless
             of the outer window's own aspect ratio. */}
-        <div className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[58fr_24fr_18fr] overflow-hidden bg-[color:var(--ground)]">
+        <div
+          data-tv-screen
+          className="relative grid h-[min(100vh,56.25vw)] w-[min(100vw,177.78vh)] grid-rows-[58fr_24fr_18fr] overflow-hidden bg-[color:var(--ground)]"
+        >
           {/* h-full is required at every level down from the grid row — a
               track's fr size only constrains a child that actually claims
               h-full; without it, panels fall back to their natural content
