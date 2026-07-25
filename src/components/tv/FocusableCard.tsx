@@ -1,51 +1,117 @@
+'use client';
+
 import Link from 'next/link';
 import { clsx } from 'clsx';
+import {
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+} from 'react';
 
-// A single actionable element. Styled at BOTH `focus:` and `focus-visible:`
-// because Android System WebView versions on cheaper TVs vary in
-// :focus-visible support, and a TV has no real mouse so plain :focus never
-// misfires. `hover:` exists only so a developer testing with a mouse sees the
-// same affordance. Deliberately unopinionated about shape/size/color beyond
-// the interaction states — callers own their own container styling via
-// className so a pill and a full tile can share one focus contract without
-// fighting over which rounding/padding utility wins the cascade.
-const BASE = clsx(
-  'outline-none no-underline transition-transform duration-150 border-4 border-transparent',
-  'hover:border-[color:var(--gold)] hover:scale-[1.02]',
-  'focus:border-[color:var(--gold)] focus:scale-[1.02] focus:shadow-[0_0_0_6px_rgba(217,162,75,0.3)]',
-  'focus-visible:border-[color:var(--gold)] focus-visible:scale-[1.02] focus-visible:shadow-[0_0_0_6px_rgba(217,162,75,0.3)]',
-);
+const ACTIVATION_KEYS = new Set(['Enter', ' ', 'Spacebar']);
+
+type TvFocusSection = 'hero' | 'recommendations' | 'actions';
+type InteractionStyle = CSSProperties & {
+  '--tv-focus-scale': number;
+  '--tv-pressed-scale': number;
+};
 
 interface FocusableCardProps {
-  href: string;
+  href?: string;
   /** Opens in a new tab with safe rel attributes (for outbound links). */
   external?: boolean;
+  /** Turns a link-less surface into a real button. */
+  onClick?: () => void;
   className?: string;
   children: React.ReactNode;
   'aria-label'?: string;
+  autoFocus?: boolean;
+  tvSection?: TvFocusSection;
+  tvIndex?: number;
+  focusScale?: number;
+  pressedScale?: number;
 }
 
 /**
- * Renders a real <a>/next/link element (never a <div onClick>) so Chromium's
- * built-in spatial navigation in kiosk WebViews maps the D-pad to focus/activate
- * without extra JavaScript.
+ * Shared TV focus contract for links, buttons, and browsable information
+ * surfaces. Focus combines scale, outline, and a surface shift; Enter/Select
+ * and pointer presses briefly scale down and strengthen the inset edge so
+ * "pressed" is visibly distinct from merely resting in the focused state.
  */
 export function FocusableCard({
   href,
   external,
+  onClick,
   className,
   children,
+  autoFocus,
+  tvSection,
+  tvIndex,
+  focusScale = 1.05,
+  pressedScale = 0.98,
   ...rest
 }: FocusableCardProps) {
+  const [pressed, setPressed] = useState(false);
+  const interactionStyle: InteractionStyle = {
+    '--tv-focus-scale': focusScale,
+    '--tv-pressed-scale': pressedScale,
+  };
+  const sharedProps = {
+    className: clsx('tv-focusable', className),
+    'data-pressed': pressed ? 'true' : 'false',
+    'data-tv-focusable': 'true',
+    'data-tv-section': tvSection,
+    'data-tv-index': tvIndex,
+    style: interactionStyle,
+    autoFocus,
+    onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+      if (!ACTIVATION_KEYS.has(event.key)) return;
+      // Native links/buttons often activate on keydown, which skips the visual
+      // pressed interval. Activate on keyup instead so the held state renders.
+      event.preventDefault();
+      if (!event.repeat) setPressed(true);
+    },
+    onKeyUp: (event: KeyboardEvent<HTMLElement>) => {
+      if (!ACTIVATION_KEYS.has(event.key)) return;
+      event.preventDefault();
+      setPressed(false);
+      if (href || onClick) event.currentTarget.click();
+    },
+    onPointerDown: (event: PointerEvent<HTMLElement>) => {
+      if (event.button === 0) setPressed(true);
+    },
+    onPointerUp: () => setPressed(false),
+    onPointerCancel: () => setPressed(false),
+    onPointerLeave: () => setPressed(false),
+    onBlur: () => setPressed(false),
+    ...rest,
+  };
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
+        {...sharedProps}
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} {...sharedProps}>
+        {children}
+      </button>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noopener noreferrer' : undefined}
-      className={clsx(BASE, className)}
-      {...rest}
-    >
+    <div role="group" tabIndex={0} {...sharedProps}>
       {children}
-    </Link>
+    </div>
   );
 }
